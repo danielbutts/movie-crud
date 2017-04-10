@@ -1,0 +1,27 @@
+<h1>{{title}}</h1>
+<p>Edit Movie</p>
+<br>
+<p><a href="/">Home</a> <a href="/movies">Back to Movies</a></p>
+<br>
+<form action="/movies/{{movie.id}}?_method=PUT" method="POST">
+  <input id="id" type="hidden" name="id" value="{{movie.id}}">
+
+  <div class="form-group">
+    <label for="title">Title</label><input id="title" type="text" name="title" value="{{movie.title}}" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="director">Director</label><input id="director" type="text" name="director" value="{{movie.director}}" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="year">Year</label><input id="year" type="text" name="year" value="{{movie.year}}" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="rating">Rating</label><input id="rating" type="text" name="rating" value="{{movie.rating}}" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="poster_url">Poster</label><input id="poster_url" type="text" name="poster_url" value="{{movie.poster_url}}" class="form-control">
+  </div>
+  <div class="form-group">
+    <input id="submit" type="submit" value="Update Message">
+  </div>
+</form>
