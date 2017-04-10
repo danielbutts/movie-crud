@@ -93,7 +93,6 @@ exports.seed = function(knex, Promise) {
         {title:`The Longest Day`,director:`Ken Annakin`,year:1962,rating:8},
         {title:`To Kill a Mockingbird`,director:`Robert Mulligan`,year:1962,rating:8},
         {title:`Lolita`,director:`Stanley Kubrick`,year:1962,rating:8},
-        {title:`Lolita`,director:`Stanley Kubrick`,year:1962,rating:8},
         {title:`Dr. No`,director:`Terence Young`,year:1962,rating:7},
         {title:`Donovan's Reef`,director:`John Ford`,year:1963,rating:7},
         {title:`The Great Escape`,director:`John Sturges`,year:1963,rating:8},
