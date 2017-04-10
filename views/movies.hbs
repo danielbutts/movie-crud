@@ -1,0 +1,23 @@
+<h1>{{title}}</h1>
+<p>Movie List</p>
+<br>
+<p><a href="/">Home</a></p>
+<br>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Year</th>
+    <th>Directed By</th>
+    <th>Rating</th>
+  </tr>
+{{#each movies}}
+<tr>
+  <td>{{title}}</td>
+  <td>{{year}}</td>
+  <td>{{director}}</td>
+  <td>{{rating}}</td>
+  <td><a href="">Edit</a></td>
+  <td><a href="">Delete</a></td>
+</tr>
+{{/each}}
