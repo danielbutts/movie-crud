@@ -1,0 +1,33 @@
+<h1>{{title}}</h1>
+<p>Add A Movie</p>
+<br>
+<p><a href="/">Home</a> <a href="/movies">Back to Movies</a></p>
+
+{{#if messages}}
+  <ul>
+  {{#each messages}}
+    <li>{{this}}</li>
+  {{/each}}
+  </ul>
+{{/if}}
+
+<form action="/movies" method="POST">
+  <div class="form-group">
+    <label for="title">Title</label><input id="title" type="text" name="title" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="director">Director</label><input id="director" type="text" name="director" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="year">Year</label><input id="year" type="text" name="year" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="rating">Rating</label><input id="rating" type="text" name="rating" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="poster_url">Poster</label><input id="poster_url" type="text" name="poster_url" class="form-control">
+  </div>
+  <div class="form-group">
+    <input id="submit" type="submit" value="Update Message">
+  </div>
+</form>

@@ -1,11 +1,33 @@
 <h1>{{title}}</h1>
 <p>Movie Detail</p>
 <br>
-<p><a href="/">Home</a> <a href="/movies">Back to Movies</a></p>
+<p><a href="/">Home</a> <a href="/new">New</a> <a href="/movies">Back to Movies</a></p>
 <br>
 <h2>{{movie.title}} ({{movie.year}})</h2>
 <h3>Directed by {{movie.director}}</h3>
 <h3>Rating: {{movie.rating}}</h3>
 <img src="{{movie.poster_url}}">
 <br>
-<a href="/movies/{{movie.id}}/edit">Edit</a> <a href="">Delete</a>
+<a href="/movies/{{movie.id}}/edit">Edit</a> <a class="delete" id="delete_{{movie.id}}" href="">Delete</a>
+
+<script type="text/javascript">
+$(".delete").on("click",function(e) {
+  e.preventDefault();
+  let target = e.target.closest( "a" );
+  let id = $(target).attr("id").split('_')[1];
+
+  var opts = {
+    method: 'post',
+    url: `/movies/${id}?_method=DELETE`
+  };
+
+  var $xhr = $.ajax(opts);
+
+  $xhr.done(function() {
+    window.location = '/movies';
+  });
+  $xhr.fail(function(err) {
+    console.error(err);
+  });
+});
+</script>

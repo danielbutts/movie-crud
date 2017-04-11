@@ -47,8 +47,60 @@ router.put('/:id', function(req, res, next) {
     res.redirect('/movies');
   })
   .catch((err) => {
-    console.error(err);
+    next(err);
   })
+});
+
+
+router.delete('/:id', function(req, res, next) {
+  let id = req.params.id;
+  knex('movies').where({'id':id}).del().return('*')
+  .then((result) => {
+    res.json(result);
+  })
+  .catch((err) => {
+    next(err);
+  })
+});
+
+function validMovie(req, res, next) {
+  let messages = [];
+  let { title, director, poster_url } = req.body;
+  let year = parseInt(req.body.year,10);
+  if (req.body.year === '' || isNaN(parseInt(req.body.year,10)) || req.body.year.split('').length != 4) {
+    messages.push('Year must be a 4-digit year (e.g. 1996).');
+  }
+  let rating = parseInt(req.body.rating,10);
+  if (isNaN(rating) || rating < 1 || rating > 10) {
+    messages.push('Rating must be a number between 1 and 10.');
+  }
+  if (title === '') {
+    messages.push('Title is a required field.');
+  }
+  if (director === '') {
+    messages.push('Director is a required field.');
+  }
+
+  req.movie = {title, director, year, rating, poster_url};
+  req.messages = messages;
+  next();
+}
+
+router.post('/', validMovie, function(req, res, next) {
+  messages = req.messages || [];
+  if (messages.length > 0) {
+    req.flash('error',JSON.stringify(messages));
+    res.redirect('/new');
+  } else {
+    let {title, director, year, rating, poster_url} = req.movie;
+    knex('movies').insert({ 'title': title, 'director': director, 'year': year,'rating': rating, 'poster_url':poster_url }).return('*')
+    .then((result) => {
+      res.redirect(`/movies/:${result.id}`);
+    })
+    .catch((err) => {
+      next(err);
+    })
+  }
 });
 
 module.exports = router;

@@ -1,7 +1,7 @@
 <h1>{{title}}</h1>
 <p>Movie List</p>
 <br>
-<p><a href="/">Home</a></p>
+<p><a href="/">Home</a> <a href="/new">New</a></p>
 <br>
 
 <table>
@@ -17,7 +17,28 @@
   <td>{{year}}</td>
   <td>{{director}}</td>
   <td>{{rating}}</td>
-  <td><a href="">Edit</a></td>
-  <td><a href="">Delete</a></td>
+  <td><a href="/movies/{{id}}/edit">Edit</a> <a class="delete" id="delete_{{id}}" href="">Delete</a></td>
 </tr>
 {{/each}}
+
+<script type="text/javascript">
+$(".delete").on("click",function(e) {
+  e.preventDefault();
+  let target = e.target.closest( "a" );
+  let id = $(target).attr("id").split('_')[1];
+
+  var opts = {
+    method: 'post',
+    url: `/movies/${id}?_method=DELETE`
+  };
+
+  var $xhr = $.ajax(opts);
+
+  $xhr.done(function() {
+    window.location = '/movies';
+  });
+  $xhr.fail(function(err) {
+    console.error(err);
+  });
+});
+</script>

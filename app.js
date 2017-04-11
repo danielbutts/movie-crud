@@ -1,14 +1,19 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var bodyParser = require('body-parser');
-
-var index = require('./routes/index');
-var movies = require('./routes/movies');
-var methodOverride = require('method-override')
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const flash = require('req-flash');
+const session = require('express-session');
+const index = require('./routes/index');
+const movies = require('./routes/movies');
+const methodOverride = require('method-override')
 var app = express()
 
+app.use(cookieParser());
+app.use(session({ secret: '123', resave: false, saveUninitialized: false }));
+app.use(flash());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
