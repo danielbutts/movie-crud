@@ -41,12 +41,13 @@ function getSingleMovie(req, res, next) {
   knex.select('id', 'title', 'director', 'year', 'rating', 'poster_url').from('movies').where({ id })
   .then((movies) => {
     const movie = movies[0];
+    console.log('here',movie);
     req.movie = movie;
+    next();
   })
   .catch((err) => {
     next(err);
   });
-  next();
 }
 
 router.get('/:id', getSingleMovie, (req, res) => {
@@ -54,6 +55,7 @@ router.get('/:id', getSingleMovie, (req, res) => {
 });
 
 router.get('/:id/edit', getSingleMovie, (req, res) => {
+  console.log('yo',req.movie);
   res.render('edit', { movie: req.movie });
 });
 
