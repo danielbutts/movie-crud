@@ -69,7 +69,6 @@ router.put('/:id', validMovie, (req, res, next) => {
   });
 });
 
-
 router.delete('/:id', (req, res, next) => {
   const id = req.params.id;
   knex('movies').where({ id }).del().return('*')
