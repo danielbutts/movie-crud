@@ -1,76 +1,26 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
 const knex = require('../db/connection');
 
-router.get('/', function(req, res, next) {
-  knex.select('id','title','director','year','rating').from('movies').orderBy('title','desc')
-  .then((movies) => {
-    res.render('movies', {movies});
-  })
-  .catch((err) => {
-    console.error(err);
-  })
-});
+const router = express.Router();
 
-router.get('/:id', function(req, res, next) {
-  let id = req.params.id;
-  knex.select('id','title','director','year','rating','poster_url').from('movies').where({'id':id})
+router.get('/', (req, res, next) => {
+  knex.select('id', 'title', 'director', 'year', 'rating').from('movies').orderBy('title', 'desc')
   .then((movies) => {
-    let movie = movies[0];
-    if (movie.poster_url === null) {
-      movie.poster_url = "../images/blank_poster.jpg";
-    }
-    res.render('detail', { movie });
-  })
-  .catch((err) => {
-    console.error(err);
-  })
-});
-
-router.get('/:id/edit', function(req, res, next) {
-  let id = req.params.id;
-  knex.select('id','title','director','year','rating','poster_url').from('movies').where({'id':id})
-  .then((movies) => {
-    let movie = movies[0];
-    res.render('edit', { movie });
-  })
-  .catch((err) => {
-    console.error(err);
-  })
-});
-
-router.put('/:id', function(req, res, next) {
-  let id = req.params.id;
-  let { title, director, year, rating, poster_url } = req.body;
-  knex('movies').update({'title': title, 'director': director, 'year': year, 'rating': rating, 'poster_url': poster_url}).where({'id':id})
-  .then((result) => {
-    res.redirect('/movies');
+    res.render('movies', { movies });
   })
   .catch((err) => {
     next(err);
-  })
-});
-
-
-router.delete('/:id', function(req, res, next) {
-  let id = req.params.id;
-  knex('movies').where({'id':id}).del().return('*')
-  .then((result) => {
-    res.json(result);
-  })
-  .catch((err) => {
-    next(err);
-  })
+  });
 });
 
 function validMovie(req, res, next) {
-  let messages = [];
-  let { title, director, poster_url } = req.body;
-  let year = parseInt(req.body.year,10);
-  if (req.body.year === '' || isNaN(parseInt(req.body.year,10)) || req.body.year.split('').length != 4) {
+  const messages = [];
+  const { title, director, poster_url } = req.body;
+  const year = parseInt(req.body.year, 10);
+  if (req.body.year === '' || isNaN(parseInt(req.body.year, 10)) || req.body.year.split('').length !== 4) {
     messages.push('Year must be a 4-digit year (e.g. 1996).');
   }
-  let rating = parseInt(req.body.rating,10);
+  const rating = parseInt(req.body.rating, 10);
   if (isNaN(rating) || rating < 1 || rating > 10) {
     messages.push('Rating must be a number between 1 and 10.');
   }
@@ -81,25 +31,70 @@ function validMovie(req, res, next) {
     messages.push('Director is a required field.');
   }
 
-  req.movie = {title, director, year, rating, poster_url};
+  req.movie = { title, director, year, rating, poster_url };
   req.messages = messages;
   next();
 }
 
-router.post('/', validMovie, function(req, res, next) {
-  messages = req.messages || [];
+function getSingleMovie(req, res, next) {
+  const id = req.params.id;
+  knex.select('id', 'title', 'director', 'year', 'rating', 'poster_url').from('movies').where({ id })
+  .then((movies) => {
+    const movie = movies[0];
+    req.movie = movie;
+  })
+  .catch((err) => {
+    next(err);
+  });
+  next();
+}
+
+router.get('/:id', getSingleMovie, (req, res) => {
+  res.render('detail', { movie: req.movie });
+});
+
+router.get('/:id/edit', getSingleMovie, (req, res) => {
+  res.render('edit', { movie: req.movie });
+});
+
+router.put('/:id', validMovie, (req, res, next) => {
+  const id = req.params.id;
+  const { title, director, year, rating, poster_url } = req.body;
+  knex('movies').update({ title, director, year, rating, poster_url }).where({ id })
+  .then(() => {
+    res.redirect('/movies');
+  })
+  .catch((err) => {
+    next(err);
+  });
+});
+
+
+router.delete('/:id', (req, res, next) => {
+  const id = req.params.id;
+  knex('movies').where({ id }).del().return('*')
+  .then((result) => {
+    res.json(result);
+  })
+  .catch((err) => {
+    next(err);
+  });
+});
+
+router.post('/', validMovie, (req, res, next) => {
+  const messages = req.messages || [];
   if (messages.length > 0) {
-    req.flash('error',JSON.stringify(messages));
+    req.flash('error', JSON.stringify(messages));
     res.redirect('/new');
   } else {
-    let {title, director, year, rating, poster_url} = req.movie;
-    knex('movies').insert({ 'title': title, 'director': director, 'year': year,'rating': rating, 'poster_url':poster_url }).return('*')
+    const { title, director, year, rating, poster_url } = req.movie;
+    knex('movies').insert({ title, director, year, rating, poster_url }).return('*')
     .then((result) => {
       res.redirect(`/movies/:${result.id}`);
     })
     .catch((err) => {
       next(err);
-    })
+    });
   }
 });
 
